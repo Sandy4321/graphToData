@@ -61,10 +61,46 @@ for i in xrange(0, len(new_result), len(new_result)*10/100):
 	sample_result.append((y, x))
 	new_img[y, x] = 1
 
-cv2.imshow('img', new_img)
-cv2.waitKey(0)
+origin = (363 , 56)
+X_end = (363 , 384)
+Y_end = (35 , 56)
 
-cv2.destroyWindow('img')
+data = []
+X_length = X_end[1] - origin[1]
+Y_length = origin[0] - Y_end[1]
+for i in xrange(len(sample_result)):
+	cur_y, cur_x = sample_result[i]
+	data.append((abs(cur_y - origin[0])/float(Y_length), abs(cur_x - origin[1])/float(X_length)))
+
+print "----------------------Data----------------------"
+print data
+
+X = (1985, 25)
+Y = (0, 5)
+data_scaled = []
+X_length = X_end[1] - origin[1]
+Y_length = origin[0] - Y_end[1]
+for i in xrange(len(data)):
+	cur_y, cur_x = data[i]
+	data_scaled.append((Y[0]+cur_y*Y[1], X[0]+cur_x*X[1]))
+
+print "----------------------Scaled Data----------------------"
+print data_scaled
+# cv2.imshow('image_mouse', img)
+# cv2.setMouseCallback('image_mouse',draw_circle)
+# cv2.waitKey(0)
+
+
+# cv2.imshow('img', new_img)
+# cv2.waitKey(0)
+
+# cv2.destroyWindow('img')
+
+
+
+
+
+
 # L = [(2, 0)]
 # print connected_component(L, img), img
 
