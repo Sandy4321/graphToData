@@ -1,7 +1,8 @@
 import cv2
 import numpy as np 
+import matplotlib.pyplot as plt 
 
-def draw_circle(event,x,y,flags,param):
+def get_point(event,x,y,flags,param):
     if event == cv2.EVENT_LBUTTONDBLCLK:
         print y,',', x
 
@@ -25,21 +26,63 @@ def compare(a, b):
 	y1, x1 = a
 	y2, x2 = b
 	return x1 - x2
-	# if (y1 - y2) == 0:
-	# 	return x1 - x2
-	# return y1 - y2
 
-img = cv2.imread("line-graph-overview-two.jpg")
+#drecrease_or_increase_or_neutral -> DIN
+#status descrease-> True, increase ->False, neutral -> None
+def d_i_n(prev, cur):
+	status = None
+	if prev[0] - cur[0] < 0:
+		status = False
+	elif prev[0] - cur[0] > 0:
+		status = True
+	return status
+
+# L = [(217 , 56)]
+# origin = (409 , 56)
+# X_end = (410 , 459)
+# Y_end = (49 , 55)
+# X = (1, 6)
+# Y = (0, 80)
+# img = cv2.imread("line_example1.jpg")
+
+
+# L = [(80 , 377)]
+# origin = (363 , 56)
+# X_end = (363 , 384)
+# Y_end = (35 , 56)
+# X = (1985, 25)
+# Y = (0, 5)
+# img = cv2.imread("line-graph-overview-two.jpg")
+
+
+L = [(234 , 145)]
+origin = (290 , 145)
+X_end = (290 , 427)
+Y_end = (103 , 145)
+X = (1985, 25)
+Y = (0, 5)
+img = cv2.imread("temp.png")
+
+
 grayImg = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 bin_image = np.zeros(grayImg.shape)
 
+
+# cv2.imshow('temp', img)
+# cv2.setMouseCallback('temp', get_point)
+# cv2.waitKey(0)
+
+
+
 #from the actual get nearest closest color
-actual_color = grayImg[80 , 377]
+actual_color = grayImg[L[0]]
 bin_image[(grayImg <= actual_color+20) * (grayImg >= actual_color-20)] = 1
 
 new_img = np.zeros(grayImg.shape)
-L = [(80 , 377)]
+
 result, new_img = connected_component(L, bin_image, new_img)
+
+
 
 result = sorted(result, cmp=compare)
 
@@ -54,16 +97,33 @@ for i in xrange(0, len(result)):
 		new_result.append(result[i])
 		prev = result[i]
 
-sample_result = []
-new_img = np.zeros(new_img.shape)
-for i in xrange(0, len(new_result), len(new_result)*10/100):
-	y, x = new_result[i]
-	sample_result.append((y, x))
-	new_img[y, x] = 1
+# sample_result = []
+# new_img = np.zeros(new_img.shape)
+# for i in xrange(0, len(new_result), len(new_result)*10/100):
+# 	y, x = new_result[i]
+# 	sample_result.append((y, x))
+# 	new_img[y, x] = 1
 
-origin = (363 , 56)
-X_end = (363 , 384)
-Y_end = (35 , 56)
+#detect peak
+new_img = np.zeros(new_img.shape)
+sample_result = []
+prev = new_result[0]
+cur = new_result[1]
+status = d_i_n(prev, cur)
+if not status:
+	prev = cur
+sample_result.append(prev)
+
+temp_status = None
+for i in xrange(2, len(new_result)): 
+	cur = new_result[i]
+	temp_status = d_i_n(prev, cur)
+	if  temp_status == status:
+		sample_result.append(prev)
+		status = temp_status
+	prev = cur
+
+print len(sample_result), len(new_result)
 
 data = []
 X_length = X_end[1] - origin[1]
@@ -72,11 +132,12 @@ for i in xrange(len(sample_result)):
 	cur_y, cur_x = sample_result[i]
 	data.append((abs(cur_y - origin[0])/float(Y_length), abs(cur_x - origin[1])/float(X_length)))
 
-print "----------------------Data----------------------"
-print data
+# print "----------------------Data----------------------"
+# print data
 
-X = (1985, 25)
-Y = (0, 5)
+# plt.plot([x[1] for x  in data], [x[0] for x  in data])
+# plt.show()
+
 data_scaled = []
 X_length = X_end[1] - origin[1]
 Y_length = origin[0] - Y_end[1]
@@ -84,68 +145,8 @@ for i in xrange(len(data)):
 	cur_y, cur_x = data[i]
 	data_scaled.append((Y[0]+cur_y*Y[1], X[0]+cur_x*X[1]))
 
-print "----------------------Scaled Data----------------------"
-print data_scaled
-# cv2.imshow('image_mouse', img)
-# cv2.setMouseCallback('image_mouse',draw_circle)
-# cv2.waitKey(0)
+# print "----------------------Scaled Data----------------------"
+# print data_scaled
 
-
-# cv2.imshow('img', new_img)
-# cv2.waitKey(0)
-
-# cv2.destroyWindow('img')
-
-
-
-
-
-
-# L = [(2, 0)]
-# print connected_component(L, img), img
-
-# img = cv2.imread("linegraph-redriver-single.jpeg")
-# cv2.imshow('image_mouse', img)
-# cv2.setMouseCallback('image_mouse',draw_circle)
-# cv2.waitKey(0)
-
-# grayImg = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
-# bin_image = np.zeros(grayImg.shape)
-# actual_color = grayImg[285 , 546]
-
-
-# #bin_image[(grayImg <= actual_color+20) * (grayImg >= actual_color-20)] = 1
-
-# bin_image[(grayImg <= actual_color+20) * (grayImg >= actual_color-20)] = 1
-
-# new_img = np.zeros(grayImg.shape)
-# L = [(285 , 546)]
-# connected_component(L, bin_image, new_img)
-
-# cv2.imshow('img', new_img)
-# cv2.waitKey(0)
-# def find_line_points(y, x, img):
-# 	L = [(y, x)]
-# 	connected_component(L, img)
-
-# img = cv2.imread("astracharts2.jpg")
-# grayImg = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-# print img[134, 66]
-
-
-# for i in xrange(200):
-# 	cv2.circle(img, (66+i, 134), 4, (255, 255, 255), thickness=2, lineType=8, shift=0)
-# 	cv2.imshow("img", img)
-# 	cv2.waitKey(33)
-
-# cv2.destroyWindow('img')
-
-
-# contours, hierarchy = cv2.findContours(grayImg, cv2.cv.CV_RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE, (0, 0))
-
-# for b,cnt in enumerate(contours):
-# 	cv2.drawContours( img, contours, b, (255, 0, 0), 2, 8, hierarchy, 0, (0, 0))
-# print len(contours)
-# cv2.imshow('img', img)
-# cv2.waitKey(0)
+plt.plot([x[1] for x  in data_scaled], [x[0] for x  in data_scaled])
+plt.show()
