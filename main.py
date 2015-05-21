@@ -46,22 +46,22 @@ def d_i_n(prev, cur):
 # img = cv2.imread("line_example1.jpg")
 
 
-# L = [(80 , 377)]
-# origin = (363 , 56)
-# X_end = (363 , 384)
-# Y_end = (35 , 56)
-# X = (1985, 25)
-# Y = (0, 5)
-# img = cv2.imread("line-graph-overview-two.jpg")
-
-
-L = [(234 , 145)]
-origin = (290 , 145)
-X_end = (290 , 427)
-Y_end = (103 , 145)
+L = [(235 , 119)]
+origin = (363 , 56)
+X_end = (363 , 384)
+Y_end = (35 , 56)
 X = (1985, 25)
 Y = (0, 5)
-img = cv2.imread("temp.png")
+img = cv2.imread("line-graph-overview-two.jpg")
+
+
+# L = [(234 , 145)]
+# origin = (290 , 145)
+# X_end = (290 , 427)
+# Y_end = (103 , 145)
+# X = (1985, 25)
+# Y = (0, 5)
+# img = cv2.imread("temp.png")
 
 
 grayImg = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -82,7 +82,8 @@ new_img = np.zeros(grayImg.shape)
 
 result, new_img = connected_component(L, bin_image, new_img)
 
-
+cv2.imshow('temp', new_img)
+cv2.waitKey(0)
 
 result = sorted(result, cmp=compare)
 
@@ -118,7 +119,7 @@ temp_status = None
 for i in xrange(2, len(new_result)): 
 	cur = new_result[i]
 	temp_status = d_i_n(prev, cur)
-	if  temp_status == status:
+	if  temp_status != status:
 		sample_result.append(prev)
 		status = temp_status
 	prev = cur
