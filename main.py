@@ -45,14 +45,19 @@ def d_i_n(prev, cur):
 # Y = (0, 80)
 # img = cv2.imread("line_example1.jpg")
 
+img = cv2.imread("line-graph-overview-two.jpg")
 
-L = [(235 , 119)]
+size_y, size_x, size_z = img.shape
+temp = {'x':	28.416666666666664, 'y': 59.5}
+
+L = []
+L.append((int(round(temp['y'] * size_y/100)), int(round(temp['x'] * size_x/100))))
+print L
 origin = (363 , 56)
 X_end = (363 , 384)
 Y_end = (35 , 56)
 X = (1985, 25)
 Y = (0, 5)
-img = cv2.imread("line-graph-overview-two.jpg")
 
 
 # L = [(234 , 145)]
@@ -74,7 +79,7 @@ bin_image = np.zeros(grayImg.shape)
 
 
 
-#from the actual get nearest closest color
+#from the actual, get all nearest closest color
 actual_color = grayImg[L[0]]
 bin_image[(grayImg <= actual_color+20) * (grayImg >= actual_color-20)] = 1
 
@@ -82,8 +87,8 @@ new_img = np.zeros(grayImg.shape)
 
 result, new_img = connected_component(L, bin_image, new_img)
 
-cv2.imshow('temp', new_img)
-cv2.waitKey(0)
+# cv2.imshow('temp', new_img)
+# cv2.waitKey(0)
 
 result = sorted(result, cmp=compare)
 
@@ -124,7 +129,7 @@ for i in xrange(2, len(new_result)):
 		status = temp_status
 	prev = cur
 
-print len(sample_result), len(new_result)
+# print len(sample_result), len(new_result)
 
 data = []
 X_length = X_end[1] - origin[1]
