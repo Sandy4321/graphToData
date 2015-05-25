@@ -33,8 +33,10 @@ def d_i_n(prev, cur):
 	status = None
 	if prev[0] - cur[0] < 0:
 		status = False
-	elif prev[0] - cur[0] >= 0:
+	elif prev[0] - cur[0] > 0:
 		status = True
+	else:
+		status = None
 	return status
 
 # L = [(217 , 56)]
@@ -124,18 +126,19 @@ temp_status = None
 for i in xrange(2, len(new_result)): 
 	cur = new_result[i]
 	temp_status = d_i_n(prev, cur)
-	if  temp_status != status:
+	if temp_status!=None and temp_status != status:
 		sample_result.append(prev)
 		status = temp_status
 	prev = cur
 
 
 data = []
-X_length = X_end[1] - origin[1]
-Y_length = origin[0] - Y_end[1]
+X_length = abs(X_end[1] - origin[1])
+Y_length = abs(origin[0] - Y_end[1])
 for i in xrange(len(sample_result)):
 	cur_y, cur_x = sample_result[i]
-	data.append((abs(cur_y - origin[0])/float(Y_length), abs(cur_x - origin[1])/float(X_length)))
+	data.append(((origin[0] - cur_y)/float(Y_length), (cur_x - origin[1])/float(X_length)))
+
 # print "----------------------Data----------------------"
 # print data
 
